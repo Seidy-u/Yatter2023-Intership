@@ -1,0 +1,101 @@
+@startuml
+
+package domain {
+  class Password {
+    + value: String
+    + validate(): Boolean
+  }
+
+  class Username {
+    + value: String
+    + validate()
+  }
+
+  package service {
+    interface LoginService {
+      + execute(username: Username, password: Password)
+    }
+  }
+}
+
+package infra {
+  package pref {
+    class MePreferences {
+      - context: Context
+      - sharedPreferences: SharedPreferences
+      + getUsername(): String
+      + putUsername(username: String?)
+      + clear()
+    }
+  }
+
+  package domain {
+    package service {
+      class LoginServiceImpl {
+        - mePreferences: MePreferences
+      }
+    }
+  }
+}
+
+package usecase {
+  interface LoginUseCase {
+    + execute(username: Username, password: Password): LoginUseCaseResult
+  }
+
+  class LoginUseCaseImpl {
+    - loginService: LoginService
+  }
+
+  class LoginUseCaseResult {
+  }
+}
+
+package ui {
+  package login {
+    class LoginActivity
+    class LoginViewModel {
+      - loginUseCase: LoginUseCase
+      + navigateToPublicTimeLine: LiveData<Unit>
+      + navigateToRegister: LiveData<Unit>
+      + uiState: StateFlow<LoginUiState>
+
+      + onChangedUsername(username: String)
+      + onChangedPassword(password: String)
+      + onClickLogin()
+      + onClickRegister()
+    }
+    class LoginUiState {
+      + loginBindingModel: LoginBindingModel
+      + validUsername: Boolean
+      + validPassword: Boolean
+      + isLoading: Boolean
+
+      + isEnableLogin: Boolean
+    }
+    class LoginBindingModel {
+      + username: String
+      + password: String
+    }
+  }
+}
+
+LoginServiceImpl -- MePreferences
+LoginServiceImpl --|> LoginService
+
+LoginActivity -- LoginViewModel
+LoginViewModel -- LoginUseCase
+LoginViewModel -- LoginUiState
+LoginUiState -- LoginBindingModel
+
+LoginUseCaseImpl -- LoginService
+LoginUseCaseImpl --|> LoginUseCase
+
+LoginUseCase -- LoginUseCaseResult
+
+LoginUseCase -- Username
+LoginUseCase -- Password
+
+LoginService -- Username
+LoginService -- Password
+@enduml
