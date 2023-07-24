@@ -1,0 +1,105 @@
+@startuml
+
+package domain {
+  class Me
+  interface AccountRepository {
+    + findMe(): Me?
+    + findByUsername(username: Username): Account?
+    + create(...)
+    + update(...)
+  }
+
+  interface GetMeService {
+    + execute(): Me?
+  }
+
+  interface StatusRepository {
+    + create(...): Status
+  }
+}
+
+package infra {
+  package domain {
+    class MeImpl
+    package repository {
+      class AccountRepositoryImpl {
+        - mePreferences: MePreferences
+        - yatterApi: YatterApi
+      }
+
+      class StatusRepositoryImpl {
+        - mePreferences: MePreferences
+        - yatterApi: YatterApi
+      }
+    }
+    package service {
+      class GetMeServiceImpl {
+        - accountRepository: AccountRepository
+      }
+    }
+  }
+}
+
+package usecase {
+  interface PostStatusUseCase {
+    + execute(statusText: String): PostStatusUseCaseResult
+  }
+
+  class PostStatusUseCaseImpl {
+    - statusRepository: StatusRepository
+  }
+
+  class PostStatusUseCaseResult
+}
+
+package ui.post {
+  class PostViewModel {
+    - postStatusUseCase: PostStatusUseCase
+    - getMeService: GetMeService
+
+    + uiState: StateFlow<PostUiState>
+    + goBack: LiveData<Unit>
+
+    + onCreate()
+    + onChangedStatusText(statusText: String)
+    + onClickPost()
+    + onClickNavIcon()
+  }
+
+  class PostActivity {
+    - postViewModel: PostViewModel
+  }
+
+  class PostUiState {
+    + bindingModel: PostBindingModel
+    + isLoading: Boolean
+    + canPost: Boolean
+  }
+
+  class PostBindingModel {
+    + avatarUrl: String?
+    + statusText: String
+  }
+}
+
+MeImpl --|> Me
+AccountRepository -- Me
+GetMeService -- Me
+
+GetMeServiceImpl --|> GetMeService
+AccountRepositoryImpl --|> AccountRepository
+StatusRepositoryImpl --|> StatusRepository
+
+GetMeService -- AccountRepository
+
+PostStatusUseCaseImpl --|> PostStatusUseCase
+PostStatusUseCase -- PostStatusUseCaseResult
+PostStatusUseCaseImpl -- StatusRepository
+
+PostActivity -- PostViewModel
+PostViewModel -- PostUiState
+PostUiState -- PostBindingModel
+
+PostViewModel -- PostStatusUseCase
+PostViewModel -- GetMeService
+@enduml

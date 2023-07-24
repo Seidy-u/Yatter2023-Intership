@@ -1,0 +1,108 @@
+@startuml
+
+package ui {
+class PublicTimelineActivity {}
+class PublicTimelineViewModel {
+  - _uiState: MutableStateFlow<PublicTimelineUiState>
+  + uiState: StateFlow<PublicTimelineUiState>
+  + onResume()
+  + onRefresh()
+}
+
+class PublicTimelineUiState {
+  + statusList: List<StatusBindingModel>
+  + isLoading: Boolean
+  + isRefreshing: Boolean
+}
+
+class StatusBindingModel {
+  + id: String
+  + displayName: String
+  + username: String
+  + avatar: String?
+  + content: String
+  + attachmentMediaList: List<MediaBindingModel>
+}
+
+class MediaBindingModel {
+  + id: String
+  + type: String
+  + url: String
+  + description: String
+
+}
+
+}
+
+package domain {
+
+class Account {
+  + username: Username
+  + displayName: String?
+  + note: String?
+  + avatar: URL?
+  + header: URL?
+  + followingCount: Int
+  + followerCount: Int
+}
+
+class Status {
+  + id: StatusId
+  + account: Account
+  + content: String
+  + attachmentMediaList: List<Media>
+}
+
+class StatusId {
+  + value: String
+}
+
+class Media {
+  + id: MediaId
+  + type: String
+  + url: String
+  + description: String
+}
+
+class MediaId {
+  + value: String
+}
+
+class Username {
+  + value: String
+  + validate()
+}
+
+interface StatusRepository {
+  + findAllPublic(): List<Status>
+}
+
+}
+
+package infra {
+class StatusRepositoryImpl {
+}
+
+interface YatterApi {
+  + getPublicTimeline(onlyMedia: Boolean, maxId: String?, sinceId: String?, limit: Int)
+}
+}
+
+StatusRepositoryImpl -- YatterApi
+StatusRepositoryImpl --|> StatusRepository
+
+PublicTimelineActivity -- PublicTimelineViewModel
+
+PublicTimelineViewModel -- StatusRepository
+PublicTimelineViewModel -- PublicTimelineUiState
+PublicTimelineUiState -- StatusBindingModel
+StatusBindingModel -- MediaBindingModel
+
+StatusRepository -- Status
+Status -- StatusId
+Status -- Account
+Status -- Media
+Media -- MediaId
+Account -- Username
+
+@enduml
