@@ -1,0 +1,55 @@
+services:
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --default-time-zone='+9:00'"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: yatter
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_USER: yatter
+      MYSQL_PASSWORD: yatter
+    volumes:
+      - "db-data:/var/lib/mysql"
+      - "./ddl:/docker-entrypoint-initdb.d"
+    restart: on-failure
+
+  web:
+    image: ghcr.io/dmm-com/yatter-backend
+    working_dir: "/work/yatter-backend-go"
+    command: ["air"]
+    volumes:
+      - ".:/work/yatter-backend-go"
+      - "./.data/go-pkg:/go/pkg/mod/cache"
+      - "media-data:/work/yatter-backend-go/media"
+    ports:
+      - "8080:8080"
+    environment:
+      ENV: Development
+      MYSQL_DATABASE: yatter
+      MYSQL_USER: yatter
+      MYSQL_PASSWORD: yatter
+      MYSQL_HOST: "mysql:3306"
+    depends_on:
+      - mysql
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: on-failure
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./openapi.yml:/data/openapi.yml
+    environment:
+      SWAGGER_JSON: /data/openapi.yml
+volumes:
+  db-data:
+    driver: local
+  media-data:
