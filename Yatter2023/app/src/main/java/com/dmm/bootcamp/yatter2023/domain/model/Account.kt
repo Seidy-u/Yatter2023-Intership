@@ -8,8 +8,8 @@ abstract class Account(
   val username: Username,
   val displayName: String?,
   val note: String?,
-  val avatar: URL,
-  val header: URL,
+  val avatar: URL?,
+  val header: URL?,
   val followingCount: Int,
   val followerCount: Int,
 ) : Entity<AccountId>(id) {
