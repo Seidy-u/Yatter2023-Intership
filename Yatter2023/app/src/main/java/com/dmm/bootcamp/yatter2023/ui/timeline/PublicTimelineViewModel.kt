@@ -33,5 +33,12 @@ class PublicTimelineViewModel(
             _uiState.update { it.copy(isLoading = false) } // 4
         }
     }
+    fun onRefresh() {
+        viewModelScope.launch { // 1
+            _uiState.update { it.copy(isRefreshing = true) } // 2
+            fetchPublicTimeline() // 3
+            _uiState.update { it.copy(isRefreshing = false) } // 4
+        }
+    }
 
 }
