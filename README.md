@@ -15,10 +15,10 @@
 git@github.com:Seidy-u/Yatter2023-Intership.git
 ```
 
-### Initial setting : Android Studio
+### Initial setting: Android Studio
 
 - https://developer.android.com/studio/install?hl=ja
 
-### Initial setting　: Docker
+### Initial setting: Docker
 
 - https://www.docker.com/
