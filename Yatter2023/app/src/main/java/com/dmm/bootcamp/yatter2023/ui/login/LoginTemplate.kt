@@ -11,12 +11,14 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,10 +38,11 @@ fun LoginTemplate(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(text = "ログイン")
-                }
+                title = { Text(text = "ログイン") } ,
+                backgroundColor = Color.Blue,
+                contentColor = Color.White
             )
+
         }
     ) {
         Box(

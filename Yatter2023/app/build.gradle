@@ -73,6 +73,7 @@ dependencies {
     implementation 'io.insert-koin:koin-android:3.4.0'
     implementation 'io.coil-kt:coil-compose:2.3.0'
     implementation "androidx.core:core-splashscreen:1.0.1"
+    implementation 'androidx.navigation:navigation-runtime-ktx:2.5.2'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:1.13.5"

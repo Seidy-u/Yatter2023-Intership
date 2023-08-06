@@ -96,7 +96,7 @@ fun PostTemplate(
                         modifier = Modifier.padding(16.dp),
                         enabled = canPost,
                     ) {
-                        Text(text = "ツイート")
+                        Text(text = "Post")
                     }
                 }
             }
